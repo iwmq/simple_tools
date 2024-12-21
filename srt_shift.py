@@ -116,11 +116,11 @@ def shift_time_span(start: SubtitleTime, end: SubtitleTime, delta: float) -> str
     return f'{start} {SEP} {end}\n'
 
 
-def try_shift_line(line: str) -> str | None:
+def try_shift_line(line: str, delta: float) -> str | None:
     s, e = parse_time_span(line)
     if None in (s, e):
         return None
-    new_line = shift_time_span(s, e, 1.5)
+    new_line = shift_time_span(s, e, delta)
     return new_line
 
 
@@ -132,7 +132,7 @@ def shift_srt(fpath: str, delta: float):
     with open(fpath, encoding='utf-8') as f:
         new_lines = []
         for line in f.readlines():
-            new_time_span_line = try_shift_line(line)
+            new_time_span_line = try_shift_line(line, delta)
             new_lines.append(new_time_span_line or line)
     base_path, ext = os.path.splitext(fpath)
     new_fpath = f'{base_path}_shifted_{delta}{ext}'
@@ -145,11 +145,18 @@ if __name__ == '__main__':
         usage()
     else:
         fpath = sys.argv[1]
-        delta = sys.argv[2]
+        delta_str = sys.argv[2]
+
         if not os.path.exists(fpath):
             print('Specified srt file does not exist')
             sys.exit(127)
-        if not delta.isnumeric():
+
+        try:
+            delta = float(delta_str)
+        except ValueError:
+            delta = None
+        if delta is None:
             print('Specified shift delta is not numeric')
             sys.exit(127)
+
         shift_srt(fpath, delta)
