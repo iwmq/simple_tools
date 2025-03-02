@@ -33,13 +33,21 @@ def get_redis():
     return R
 
 
+def get_list_content(redis_client: redis.Redis, key: str) -> list[str]:
+    assert redis_client.type(key) == 'list'
+    data = redis_client.lrange(key, start=0, end=-1)
+    return data
+
+
 def get_hash_content(redis_client: redis.Redis, key: str) -> dict[str, str]:
     assert redis_client.type(key) == 'hash'
     data = redis_client.hgetall(key)
     return data
 
 
-def get_stream_content(redis_client: redis.Redis, key: str) -> dict[str, str]:
+def get_stream_content(
+    redis_client: redis.Redis, key: str
+) -> list[tuple[str, dict[str, str]]]:
     assert redis_client.type(key) == 'stream'
     data = redis_client.xrevrange(key)
     return data
@@ -50,6 +58,8 @@ def main(key):
         sys.exit(1)
 
     match R.type(key):
+        case "list":
+            data = get_list_content(R, key)
         case "hash":
             data = get_hash_content(R, key)
         case "stream":
