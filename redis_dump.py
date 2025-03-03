@@ -2,6 +2,7 @@
 """
 Dump a redis key (hash or stream) to JSON file.
 """
+from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
@@ -45,12 +46,28 @@ def get_hash_content(redis_client: redis.Redis, key: str) -> dict[str, str]:
     return data
 
 
+def stream_id_to_datetime(stream_id: str) -> str:
+    timestamp_ms_str = stream_id.partition("-")[0]
+    timestamp_ms = int(timestamp_ms_str)
+    timestamp = timestamp_ms / 1000
+    dt = datetime.fromtimestamp(timestamp, tz=timezone.utc)
+    dt_str = dt.isoformat()
+    return dt_str
+
+
 def get_stream_content(
     redis_client: redis.Redis, key: str
-) -> list[tuple[str, dict[str, str]]]:
+) -> list[tuple[str, str, dict[str, str]]]:
     assert redis_client.type(key) == 'stream'
-    data = redis_client.xrevrange(key)
-    return data
+    stream_items: list[tuple[str, dict[str, str]]] = redis_client.xrevrange(key)
+    stream_items_with_timestamp = []
+    for stream_id, stream_data in stream_items:
+        stream_items_with_timestamp.append((
+            stream_id,
+            stream_id_to_datetime(stream_id),
+            stream_data
+        ))
+    return stream_items_with_timestamp
 
 
 def main(key):
