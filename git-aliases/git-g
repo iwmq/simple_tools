@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+if [[ "${1}" == '-h' ]]; then
+  echo "Fetch and switch to the given branch"
+  exit 0
+fi
+
+FETECH_BRANCH=${1}
+
+if [[ -z "${FETECH_BRANCH}" ]]; then
+  echo 'Please specify the branch to fetch'
+  exit 1
+fi
+
+git fetch origin ${FETECH_BRANCH}
+git switch ${FETECH_BRANCH}
+exit 0

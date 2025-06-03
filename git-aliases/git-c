@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+if [[ "${1}" == '-h' ]]; then
+  echo "Remove all branchs except the given one (must be current one)"
+  exit 0
+fi
+
+KEEP_BRANCH=${1}
+
+if [[ -z "${KEEP_BRANCH}" ]]; then
+  echo 'Please specify the branch to keep'
+  exit 1
+fi
+
+CURRENT_BRANCH=$(git branch --show-current)
+if [[ "${KEEP_BRANCH}" != "${CURRENT_BRANCH}" ]]; then
+  echo 'the branch to keep must be the current one'
+  exit 2
+fi
+
+DELETE_BRANCHES=$(git branch --no-contains "${KEEP_BRANCH}")
+
+git branch -D ${DELETE_BRANCHES}
+exit 0

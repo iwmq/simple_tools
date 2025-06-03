@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+if [[ "${1}" == '-h' ]]; then
+  echo "Display current branch"
+  exit 0
+fi
+
+git branch --show-current

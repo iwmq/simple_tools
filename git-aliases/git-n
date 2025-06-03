@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+if [[ "${1}" == '-h' ]]; then
+  echo "Sync current branch with remote one"
+  exit 0
+fi
+
+curent_branch=$(git branch --show-current)
+git pull origin ${curent_branch}
