@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+if [[ "${1}" == '-h' ]]; then
+  echo "Display last commit"
+  exit 0
+fi
+
+git log -1 HEAD

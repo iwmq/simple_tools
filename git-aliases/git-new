@@ -1,0 +1,10 @@
+
+if [[ "${1}" == '-h' ]]; then
+  echo "Create a new branch and switch to it"
+  exit 0
+fi
+
+NEW_BRANCH=${1}
+
+git switch -c ${NEW_BRANCH}
+exit 0
