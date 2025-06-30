@@ -3,6 +3,7 @@ A simple script to generate chromatograph for learning signal processing.
 
 This is second refactor of peak_gen.py. The data is generated randomly.
 """
+import argparse
 import random
 from typing import NoReturn
 
@@ -46,15 +47,32 @@ def gen_resp() -> tuple[np.ndarray, np.ndarray]:
 	return rt, resp
 
 
-def save_peek_data(rt: np.ndarray, resp: np.ndarray) -> NoReturn:
-	# Put retetion time (RT) and response together, then save the mergered data in the text file
-	data_gen = np.hstack((rt.reshape(POINT_NUMBER, 1), resp.reshape(POINT_NUMBER, 1)))
-	data_file = open('results/peak_data.txt', 'w')
-	np.savetxt(data_file, data_gen, fmt='%1.2f', delimiter='\t', header='RT (min)\tResp')
+def save_peek_data(
+	rt: np.ndarray,
+	resp: np.ndarray,
+	filename: str
+) -> NoReturn:
+	# Put retetion time (RT) and response together,
+	# then save the mergered data in the text file
+	data_gen = np.hstack(
+		(rt.reshape(POINT_NUMBER, 1), resp.reshape(POINT_NUMBER, 1))
+	)
+	data_file = open(f'results/{filename}.txt', 'w')
+	np.savetxt(
+		data_file,
+		data_gen,
+		fmt='%1.2f',
+		delimiter='\t',
+		header='RT (min)\tResp'
+	)
 
 
-def plot_chromatogram(rt: np.ndarray, resp: np.ndarray) -> NoReturn:
-	# Plot the generated chromatography
+def plot_chromatogram(
+	rt: np.ndarray,
+	resp: np.ndarray,
+	filename: str
+) -> NoReturn:
+	# Plot the generated chromatograph
 	plt.figure(figsize=[18, 8])
 	plt.plot(rt, resp, color='r', label="RI Response")
 	plt.title("Chromatogram")
@@ -63,13 +81,27 @@ def plot_chromatogram(rt: np.ndarray, resp: np.ndarray) -> NoReturn:
 	plt.legend(loc='upper right')
 	ax = plt.gca()
 	ax.axhline(0, color='k')
-	plt.savefig("results/chromatogram.png")
+	plt.savefig(f"results/{filename}.png")
 
 
 def main() -> NoReturn:
+	argparser = argparse.ArgumentParser(description="Generate a chromatogram.")
+	argparser.add_argument(
+		'-v',
+		'--version',
+		action='version',
+		version='%(prog)s 3.0'
+	)
+	argparser.add_argument(
+		'-n',
+		'--name',
+		default='chromatogram',
+		help='file name to save the chromatogram'
+	)
+	args = argparser.parse_args()
 	rt, resp = gen_resp()
-	save_peek_data(rt, resp)
-	plot_chromatogram(rt, resp)
+	save_peek_data(rt, resp, args.name)
+	plot_chromatogram(rt, resp, args.name)
 
 
 if __name__ == "__main__":
