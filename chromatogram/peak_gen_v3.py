@@ -3,7 +3,7 @@ A simple script to generate chromatograph for learning signal processing.
 
 This is second refactor of peak_gen.py. The data is generated randomly.
 """
-import argparse
+from argparse import ArgumentParser, Namespace
 import random
 from typing import NoReturn
 
@@ -85,7 +85,7 @@ def plot_chromatogram(
 
 
 def main() -> NoReturn:
-	argparser = argparse.ArgumentParser(description="Generate a chromatogram.")
+	argparser = ArgumentParser(description="Generate a chromatogram.")
 	argparser.add_argument(
 		'-v',
 		'--version',
@@ -98,7 +98,7 @@ def main() -> NoReturn:
 		default='chromatogram',
 		help='file name to save the chromatogram'
 	)
-	args = argparser.parse_args()
+	args: Namespace = argparser.parse_args()
 	rt, resp = gen_resp()
 	save_peek_data(rt, resp, args.name)
 	plot_chromatogram(rt, resp, args.name)

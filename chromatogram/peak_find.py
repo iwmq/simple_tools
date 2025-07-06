@@ -1,4 +1,4 @@
-import argparse
+from argparse import ArgumentParser, Namespace
 import os
 
 import matplotlib.pyplot as plt
@@ -30,9 +30,9 @@ def draw_peaks(data_file: str) -> None:
 
 
 def main():
-	argparser = argparse.ArgumentParser(description="Draw peaks from chromatogram data.")
+	argparser = ArgumentParser(description="Draw peaks from chromatogram data.")
 	argparser.add_argument('file', help="Path to the data file")
-	args = argparser.parse_args()
+	args: Namespace = argparser.parse_args()
 	if not os.path.exists(args.file):
 		print(f"File {args.file} does not exist.")
 		return
