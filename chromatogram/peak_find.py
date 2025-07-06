@@ -8,7 +8,6 @@ from scipy.signal import chirp, find_peaks, peak_widths, peak_prominences, find_
 
 def draw_peaks(data_file: str) -> None:
 	# Load data
-	data_file = "results/doge.txt"
 	data_array = np.loadtxt(data_file, delimiter="\t", skiprows=1)
 	rt = data_array[:, 0]
 	ri_resp = data_array[:,1]
@@ -19,10 +18,12 @@ def draw_peaks(data_file: str) -> None:
 	plt.title("Chromatogram")
 	plt.xlabel("Retention Time (Min)")
 	plt.ylabel("Response (mV)")
-	plt.legend(loc='upper right')
 
 	# Draw response
-	plt.plot(rt, ri_resp, color='r', label="RI Response")
+	ax = plt.gca()
+	ax.plot(rt, ri_resp, color='r', label="RI Response")
+	ax.legend(loc='upper right')
+
 
 	# Mark peaks
 	plt.plot(rt[peaks], ri_resp[peaks], 'x')
